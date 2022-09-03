@@ -28,12 +28,14 @@ const AddDosar = () => {
       e.preventDefault()
       const{nrDosar, parteDosar} = values
       
-      if(!nrDosar || !parteDosar){
+      if(!nrDosar || !parteDosar || user._id){
         displayAlert()
         return
       }
-      const userId = user._id
-      const currentDosar = {nrDosar, parteDosar, userId}
+      console.log(user);
+      const userId = user.id
+      
+      const currentDosar = {userId,nrDosar, parteDosar, }
       console.log(currentDosar);
       addDosar(currentDosar)
       setTimeout(()=>{

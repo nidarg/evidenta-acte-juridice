@@ -50,7 +50,7 @@ const AddAct = () => {
           // eslint-disable-next-line
           return
         }
-        const userId = user._id
+        const userId = user.id
         const currentAct = {actProcedural, dataDosar, dosarId,userId}
         addAct(currentAct,dosarId, )  
       })
