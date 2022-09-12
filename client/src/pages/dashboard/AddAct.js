@@ -52,7 +52,7 @@ const AddAct = () => {
         }
         const userId = user.id
         const currentAct = {actProcedural, dataDosar, dosarId,userId}
-        addAct(currentAct,dosarId, )  
+        addAct(currentAct,dosarId)  
       })
       //  getActe(dosarId)
       

@@ -41,13 +41,13 @@ return(
         size={200}
     />}
     {search && dosare.length === 0 &&(<div className="no-dosar">
-      <h5> Nu s-a gasit niciun dosar</h5>
+      <h3> Nu s-a gasit niciun dosar</h3>
       <button className='btn vezi-dosar' onClick={backToDosare}>
           back home
           </button>
       
     </div>)}
-  {(dosare.length === 0 && !isLoading) ? (
+  {(!isLoading && !search && dosare.length === 0) ? (
     <div className="no-dosar">
       <h3> Niciun dosar adaugat</h3>
       <p>Adauga dosar</p>
@@ -95,21 +95,24 @@ return(
 
   const Wrapper = styled.section`
   .no-dosar{
-    width:var(--max-width);
-    height:90vh;
+
+    width:var(--full-width);
+    /* width:var(--fixed-width);
+    height:var(--fixed-height); */
+    margin:0 auto;
     color: var(--primary-700);
     background-color: var(--grey-200);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding-top: 20rem;
+    padding-top: 5rem;
     h3{
-      font-size: 5rem;
+      font-size: 3rem;
       margin-bottom: 2rem;
     }
     p{
-      font-size: 2.5rem;
+      font-size: 2rem;
     }
   }
 

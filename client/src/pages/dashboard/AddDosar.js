@@ -28,7 +28,7 @@ const AddDosar = () => {
       e.preventDefault()
       const{nrDosar, parteDosar} = values
       
-      if(!nrDosar || !parteDosar || user._id){
+      if(!nrDosar || !parteDosar || !user.id){
         displayAlert()
         return
       }

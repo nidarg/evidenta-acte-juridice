@@ -153,7 +153,7 @@ return(
 
   .container-dosar{
     background-color: var(--grey-100);
-    width:100%;
+    width:var(--full-width);
     margin:3rem auto;
     display: flex;
     flex-direction: column;
@@ -177,7 +177,7 @@ return(
     .act-procedural
     .data-dosar
     .termen{
-      max-width:25%;
+      max-width:33%;
       text-align: center;
     }
 
@@ -210,13 +210,13 @@ return(
     }
   }
 
-  @media (min-width: 768px) {
-    .form-center {
-      grid-template-columns: 1fr 1fr;
+  @media (max-width: 768px) {
+    .dosar {
+      flex-direction:column
     }
   }
   @media (min-width: 992px) {
-    .form-center {
+    .dosar {
       grid-template-columns: 1fr 1fr 1fr;
     }
     .btn-block {

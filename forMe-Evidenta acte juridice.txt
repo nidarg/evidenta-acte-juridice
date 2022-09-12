@@ -1,0 +1,219 @@
+CLIENT
+
+in App.js -> ProtectedRoute.js->SharedLayout.js
+  ProtectedRoute renders children(SharedLayout) only if user is loged in otherwise Navigate to Landing page
+
+  SharedLayout.js
+    renders SmallSidebar.js -> only if max-width < 992px
+    renders BigSidebar.js -> if max-width > 992px and showSidebar from AppContext is true
+
+    renders Navbar.js which is shared across all pages by using <Outlet> from react-router-dom
+
+    SmallSidebar and BigSidebar renders NavLinks.js
+      NavLinks.js uses NavLink from router-react-dom  and links from utils.js
+    
+    Navbar.js renders Logo; a button wich toggle sideBar onClick using toggleSideBar from AppContext and button showing the loged in user if exists and onClick on this button -> setShowLogout() from AppContext wich set showLogout to !showLogout and based on that is rendered logout button which onClick call logout function from AppContext -> which renders initialState and remove user from localStorage
+
+    from appContext
+      const logout = ()=>{
+        dispatch({
+          type:LOGOUT
+        })
+        removeUserFromLocalStorage()
+      }
+
+    from reducer
+      if(action.type === LOGOUT){
+        return{
+          ...initialState,
+          user:null,
+          token:null,
+          userLocation:'',
+          jobLocation:''
+        }
+      }
+
+
+    LandingPage.js -> renders a Link to '/register' route which renders Register page
+
+    REGISTER PAGE
+
+    must pass the values of inputs to login or register functions from AppContext
+    set an intialState outside component initialState= {
+              name: '',
+              email: '',
+              password: '',
+              isMember:false
+            }
+    inside component use useState
+       const [values, setValues] = useState(initialState)
+
+      import from AppContext {isLoading, showAlert, displayAlert, registerUser, loginUser, user}
+
+     render a <form> using <FormRow> component
+     handleChange onChange of input values
+      const handleChange = (e) => {
+      setValues({...values, [e.target.name] : e.target.value})
+    }
+
+    render a button which onClick-> call toggleMember
+    const toggleMember = ()=>{
+      setValues({...values, isMember : !values.isMember})
+    }
+    onSubmit()
+      -> if values not provided ->displayAlert() from AppContext
+      else
+       based on isMember state -> pass the user to login or register functions from AppContext
+
+  use useEffect(()=>{
+      if(user){
+        setTimeout(()=>{
+          navigate('/dosar')
+          window.location.reload(false);
+        },1000)
+      }
+    },[user,navigate])
+
+
+  displayAlert() from appContext
+      const displayAlert =() =>{
+        dispatch({type:DISPLAY_ALERT})
+        clearAlert()
+      }
+
+      const clearAlert = () => {
+        setTimeout(() => {
+          dispatch({
+            type: CLEAR_ALERT,
+          })
+        }, 3000)
+      }
+
+  displayAlert from reducer
+    if (action.type === DISPLAY_ALERT) {
+    return {
+      ...state,
+      showAlert: true,
+      alertType: 'danger',
+      alertText: 'Please provide all values!',
+    }
+  }
+
+  if (action.type === CLEAR_ALERT) {
+    return {
+      ...state,
+      showAlert: false,
+      alertType: '',
+      alertText: '',
+    }
+  }
+
+  login from appContext
+    const loginUser = async(currentUser)=>{
+    dispatch({type:LOGIN_REQUEST})
+    try {
+      const {data} = await axios.post('/api/auth/login',currentUser)
+      // console.log(response);
+      const{user, token, location} = data
+      dispatch({
+        type:LOGIN_SUCCESS,
+        payload:{user, token, location}
+      })
+
+      // add user to local storage
+      addUserToLocalStorage({user, token, location})
+
+    } catch (error) {
+      console.log(error.response)
+      dispatch({
+        type: LOGIN_FAIL,
+        payload: { msg: error.response.data.msg },
+      })
+    }
+    clearAlert()
+  }
+
+  login from reducer
+    ` if(action.type === LOGIN_REQUEST){
+    return{...state, isLoading:true}
+      }
+
+      if(action.type === LOGIN_SUCCESS){
+        return {
+          ...state,
+          user:action.payload.user,
+          token:action.payload.token,
+          userLocation:action.payload.location,
+          jobLocation:action.payload.location,
+          isLoading:false,
+          showAlert:true,
+          alertType:'success',
+          alertText:'Login Successful! Redirecting...'
+        }
+      }
+
+      if (action.type === LOGIN_FAIL) {
+        return {
+          ...state,
+          isLoading: false,
+          showAlert: true,
+          alertType: 'danger',
+          alertText: action.payload.msg,
+        }
+      }
+
+register from appContext
+  const registerUser = async(currentUser)=>{
+    dispatch({type:REGISTER_REQUEST})
+    try {
+      const response = await axios.post('/api/auth/register',currentUser)
+      // console.log(response);
+      const{user, token, location} = response.data
+      dispatch({
+        type:REGISTER_SUCCESS,
+        payload:{user, token, location}
+      })
+
+      // add user to local storage
+      addUserToLocalStorage({user, token, location})
+
+    } catch (error) {
+      console.log(error.response)
+      dispatch({
+        type: REGISTER_FAIL,
+        payload: { msg: error.response.data.msg },
+      })
+    }
+    clearAlert()
+  }
+
+register from reducer
+  if(action.type === REGISTER_REQUEST){
+    return{...state, isLoading:true}
+  }
+
+  if(action.type === REGISTER_SUCCESS){
+    return {
+      ...state,
+      user:action.payload.user,
+      token:action.payload.token,
+      userLocation:action.payload.location,
+      jobLocation:action.payload.location,
+      isLoading:false,
+      showAlert:true,
+      alertType:'success',
+      alertText:'User Created! Redirecting...'
+    }
+  }
+
+  if (action.type === REGISTER_FAIL) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: 'danger',
+      alertText: action.payload.msg,
+    }
+  }
+
+  
